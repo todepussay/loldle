@@ -1,1 +1,3 @@
-# loldle
+# Loldle
+
+Cheat Loldle.net
