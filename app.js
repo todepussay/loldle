@@ -2876,8 +2876,7 @@ data = [
         "name": "Lillia",
         "sexe": "Feminin",
         "role": [
-            "Jungle",
-            "Haut"
+            "Jungle"
         ],
         "espece": [
             "Esprit"
