@@ -1,4 +1,548 @@
-[
+let input = document.getElementById('input');
+
+let data;
+
+let iteration = 0;
+
+let ban_sexe = []
+let ban_role = []
+let ban_espece = []
+let ban_ressource = []
+let ban_region = []
+
+let good_sexe = ""
+let good_role = []
+let good_role_temp = []
+let good_espece = []
+let good_espece_temp = []
+let good_ressource = ""
+let good_type = []
+let good_region = []
+let good_release = 0
+let release_max = 0
+let release_min = 0
+
+
+input.addEventListener('keyup', function(e) {
+    document.getElementById('result').innerHTML = '';
+    let search = e.target.value.toLowerCase();
+    search = search.charAt(0).toUpperCase() + search.slice(1);
+
+    let result = [];
+    
+    for(let i = 0; i < data.length; i++) {
+        if(data[i].name.includes(search)) {
+            result.push(data[i]);
+        }
+    }
+
+    if (search != '') {
+        for(let i = 0; i < result.length; i++) {
+            let button = document.createElement('button');
+            button.innerHTML = result[i].name;
+            button.classList.add('btn');
+            button.onclick = function() {
+                proposition(result[i]);
+            };
+
+            document.getElementById('result').appendChild(button);
+                
+        }
+
+    }
+
+    
+});
+
+function proposition(perso) {
+
+    data = data.filter(element => element !== perso);
+
+    if (iteration == 0) {
+        document.getElementById('input').remove();
+        document.getElementById('result').innerHTML = '';
+    }
+
+    let div = document.createElement('div');
+    div.classList.add('proposition');
+    div.id = 'proposition' + iteration;
+
+    let poke = document.createElement('h2');
+    poke.innerHTML = perso.name;
+    div.appendChild(poke);
+
+    let box_type1 = document.createElement('div');
+    box_type1.classList.add('box');
+    box_type1.classList.add('good');
+    box_type1.onclick = function() {
+        changeBox(box_type1)
+    };
+    box_type1.innerHTML = perso.type1
+
+    div.appendChild(box_type1);
+
+    let box_type2 = document.createElement('div');
+    box_type2.classList.add('box');
+    box_type2.classList.add('good');
+    box_type2.onclick = function() {
+        changeBox(box_type2)
+    }
+
+    div.appendChild(box_type2);
+
+    let box_habitat = document.createElement('div');
+    box_habitat.classList.add('box');
+    box_habitat.classList.add('good');
+    box_habitat.onclick = function() {
+        changeBox(box_habitat)
+    }
+
+    div.appendChild(box_habitat);
+
+    let box_couleur = document.createElement('div');
+    box_couleur.classList.add('box');
+    box_couleur.classList.add('good');
+    box_couleur.onclick = function() {
+        changeBoxCouleur(box_couleur)
+    }
+
+    div.appendChild(box_couleur);
+
+    let box_evolution = document.createElement('div');
+    box_evolution.classList.add('box');
+    box_evolution.classList.add('good');
+    box_evolution.onclick = function() {
+        changeBoxNombre(box_evolution)
+    }
+
+    div.appendChild(box_evolution);
+
+    let box_hauteur = document.createElement('div');
+    box_hauteur.classList.add('box');
+    box_hauteur.classList.add('good');
+    box_hauteur.onclick = function() {
+        changeBoxNombre(box_hauteur)
+    }
+
+    div.appendChild(box_hauteur);
+
+    let box_poids = document.createElement('div');
+    box_poids.classList.add('box');
+    box_poids.classList.add('good');
+    box_poids.onclick = function() {
+        changeBoxNombre(box_poids)
+    }
+
+    div.appendChild(box_poids);
+
+    let generate = document.createElement('button');
+    generate.innerHTML = "Générer";
+    generate.classList.add('btn');
+    generate.onclick = function() {
+        generateProposition();
+    };
+
+    div.appendChild(generate);
+
+    let game = document.getElementById('game');
+    game.insertBefore(div, game.firstChild);
+
+    iteration++;
+
+    
+}
+
+function generateProposition(){
+    let propo = document.getElementById('proposition' + (iteration - 1));
+
+    propo.lastChild.remove();
+
+    for(let i = 0; i < propo.childNodes.length; i++) {
+        if(propo.childNodes[i].classList.contains('box')) {
+            propo.childNodes[i].onclick = function(){return null;};
+        }
+    }
+
+    let sexe = propo.childNodes[1];
+
+    if(good_sexe == ""){
+        if(sexe.classList.contains('good')) {
+            good_sexe = sexe.innerHTML;
+        } else {
+            ban_sexe.push(sexe.innerHTML);
+        }
+    }
+
+    let role = propo.childNodes[2];
+
+    if(good_role.length === 0){
+        let role_temp = role.innerHTML.split(',');
+        
+        if(role.classList.contains('good')) {
+            good_role = role_temp;
+        } else {
+            if(role.classList.contains('maybe')) {
+                if (role_temp.length === 1){
+                    good_role_temp = role_temp;
+                }
+            } else {
+                ban_role = role_temp;
+            }
+        }
+    }
+
+    let espece = propo.childNodes[3];
+
+    if(good_espece.length === 0){
+        let espece_temp = espece.innerHTML.split(',');
+        
+        if(espece.classList.contains('good')) {
+            good_espece = espece_temp;
+        } else {
+            if(espece.classList.contains('maybe')) {
+                if (espece_temp.length === 1){
+                    good_espece_temp = espece_temp;
+                }
+            } else {
+                ban_espece = espece_temp;
+            }
+        }
+    }
+
+    let ressource = propo.childNodes[4];
+
+    if(good_ressource == ""){
+        if(ressource.classList.contains('good')) {
+            good_ressource = ressource.innerHTML;
+        } else {
+            ban_ressource.push(ressource.innerHTML);
+        }
+    }
+
+    let type = propo.childNodes[5];
+    let type_possible = ['Mêlée', 'À distance']
+    
+    if(good_type.length === 0){
+        let type_temp = type.innerHTML.split(',');
+
+        if(type.classList.contains('good')) {
+            good_type = type_temp;
+        } else {
+            if(type.classList.contains('maybe')) {
+                if (type_temp.length === 1){
+                    good_type = type_possible;
+                }
+            } else {
+                good_type = type_possible.filter(function(e) { return this.indexOf(e) < 0; }, type_temp);
+            }
+        }
+    }
+
+    let region = propo.childNodes[6];
+
+    if(good_region.length === 0){
+        let region_temp = region.innerHTML.split(',');
+
+        if(region.classList.contains('good')) {
+            good_region = region_temp;
+        } else {
+            if(region.classList.contains('maybe')) {
+                if (region_temp.length === 1){
+                    good_region = region_temp;
+                }
+            } else {
+                ban_region = region_temp;
+            }
+        }
+    }
+
+    let release_date = propo.childNodes[7].firstChild.innerHTML;
+    let release_operator = propo.childNodes[7].lastChild.innerHTML;
+
+    if(good_release == 0){
+        if (release_operator == '=') {
+            good_release = release_date;
+        } else {
+            if (release_operator == '/\\') {
+                release_min = release_date;
+            } else {
+                release_max = release_date;
+            }
+        }
+    }
+
+    let result = [];
+
+    data.forEach((champ) => {
+        let sexe_ok = true;
+
+        if (good_sexe == ""){
+            if (ban_sexe.includes(champ['sexe'])) {
+                sexe_ok = false;
+            }
+        } else {
+            if (champ['sexe'] != good_sexe) {
+                sexe_ok = false;
+            }
+        }
+
+        if(sexe_ok){
+            
+            let role_ok = true;
+
+            if (good_role.length === 0){
+                if(ban_role.length > 0){
+                    ban_role.forEach((role) => {
+                        if(champ['role'].includes(role)){
+                            role_ok = false;
+                        }
+                    })
+                } else {
+                    if (good_role_temp.length != 0) {
+                        if(!champ['role'].includes(good_role_temp[0])){
+                            role_ok = false;
+                        }
+                    }
+                }
+            } else {
+                if(champ['role'].length !== good_role.length){
+                    role_ok = false;
+                }
+                
+                const listeTriee1 = champ['role'].slice().sort();
+                const listeTriee2 = good_role.slice().sort();
+
+                for (let i = 0; i < listeTriee1.length; i++) {
+                    if (listeTriee1[i] !== listeTriee2[i]) {
+                        role_ok = false;
+                    }
+                }
+            }
+
+            if(role_ok){
+                
+                let espece_ok = true;
+
+                if (good_espece.length === 0){
+                    if(ban_espece.length > 0){
+                        ban_espece.forEach((espece) => {
+                            if(champ['espece'].includes(espece)){
+                                espece_ok = false;
+                            }
+                        })
+                    } else {
+                        if (good_espece_temp.length != 0) {
+                            if(!champ['espece'].includes(good_espece_temp[0])){
+                                espece_ok = false;
+                            }
+                        }
+                    }
+                } else {
+                    if(champ['espece'].length !== good_espece.length){
+                        espece_ok = false;
+                    }
+                    
+                    const listeTriee1 = champ['espece'].slice().sort();
+                    const listeTriee2 = good_espece.slice().sort();
+
+                    for (let i = 0; i < listeTriee1.length; i++) {
+                        if (listeTriee1[i] !== listeTriee2[i]) {
+                            espece_ok = false;
+                        }
+                    }
+                }
+
+                if(espece_ok){
+                    
+                    let ressource_ok = true;
+
+                    if (good_ressource == ""){
+                        if (ban_ressource.includes(champ['ressource'])) {
+                            ressource_ok = false;
+                        }
+                    } else {
+                        if (champ['ressource'] != good_ressource) {
+                            ressource_ok = false;
+                        }
+                    }
+
+                    if(ressource_ok){
+                    
+                        let type_ok = true;
+
+                        if(good_type === 0){
+
+                            if(champ['type'].length > 1){
+                                type_ok = false;
+                            }
+                            
+                        } else {
+                            if(champ['type'].length !== good_type.length){
+                                type_ok = false;
+                            }
+                            
+                            const listeTriee1 = champ['type'].slice().sort();
+                            const listeTriee2 = good_type.slice().sort();
+
+                            for (let i = 0; i < listeTriee1.length; i++) {
+                                if (listeTriee1[i] !== listeTriee2[i]) {
+                                    type_ok = false;
+                                }
+                            }
+                        }
+                        
+                        if(type_ok){
+
+                            let region_ok = true;
+
+                            if (good_region.length === 0){
+                                if(ban_region.length > 0){
+                                    ban_region.forEach((region) => {
+                                        if(champ['region'].includes(region)){
+                                            region_ok = false;
+                                        }
+                                    })
+                                }
+                            } else {
+                                if(champ['region'].length !== good_region.length){
+                                    region_ok = false;
+                                }
+                                
+                                const listeTriee1 = champ['region'].slice().sort();
+                                const listeTriee2 = good_region.slice().sort();
+
+                                for (let i = 0; i < listeTriee1.length; i++) {
+                                    if (listeTriee1[i] !== listeTriee2[i]) {
+                                        region_ok = false;
+                                    }
+                                }
+                            }
+
+                            if(region_ok){
+
+                                let release_ok = true;
+
+                                if (good_release == 0){
+                                    if (release_max != 0) {
+                                        if(champ['release'] >= release_max){
+                                            release_ok = false;
+                                        }
+                                    }
+                                    if (release_min != 0) {
+                                        if(champ['release'] <= release_min){
+                                            release_ok = false;
+                                        }
+                                    }
+                                } else {
+                                    if(champ['release'] != good_release){
+                                        release_ok = false;
+                                    }
+                                }
+
+                                if(release_ok){
+                                    
+                                    result.push(champ);
+                                
+                                }
+                            }
+
+                        }
+                    }
+                }
+
+            }
+
+        }
+    })
+
+    data = result;
+
+    let recommandation = bestChamp(data);
+
+    for(let i = 0; i < data.length; i++) {
+
+        let button = document.createElement('button');
+        button.innerHTML = data[i].name;
+        button.classList.add('btn');
+        button.onclick = function() {
+            proposition(data[i]);
+            document.getElementById('result').innerHTML = '';
+        };
+
+        if(data[i] == recommandation){
+            button.classList.add('recommandation');
+        }
+
+        document.getElementById('result').appendChild(button);
+
+    }
+}
+
+function bestChamp(liste){
+
+    let champ = liste[0];
+    let score = 0;
+
+    for(let i = 0; i < liste.length; i++) {
+        let score_temp = 0;
+
+        score_temp += liste[i].role.length;
+        score_temp += liste[i].espece.length;
+        score_temp += liste[i].region.length;
+
+        if (score_temp > score) {
+            score = score_temp;
+            champ = liste[i];
+        }
+    }
+
+    return champ;
+}
+
+function changeBoxTrueFalse(box){
+    if(box.classList.contains('good')) {
+        box.classList.remove('good');
+        box.classList.add('bad');
+    } else {
+        box.classList.remove('bad');
+        box.classList.add('good');
+    }
+}
+
+function changeBox(box){
+    if(box.classList.contains('good')) {
+        box.classList.remove('good');
+        box.classList.add('maybe');
+    } else {
+        if(box.classList.contains('maybe')) {
+            box.classList.remove('maybe');
+            box.classList.add('bad');
+        } else {
+            box.classList.remove('bad');
+            box.classList.add('good');
+        }
+    }
+}
+
+function changeRelease(operator){
+    if(operator.innerHTML == '=') {
+        operator.innerHTML = '/\\';
+    } else {
+        if(operator.innerHTML == '/\\') {
+            operator.innerHTML = '\\/';
+        } else {
+            operator.innerHTML = '=';
+        }
+    }
+}
+
+function reset(){
+    window.location.reload();
+}
+
+
+
+data = [
     {
         "name": "Aspicot",
         "type1": "Insecte",
@@ -1848,3 +2392,15 @@
         "poids": 75.6
     }
 ]
+
+// let best = bestChamp(data);
+
+// let button = document.createElement('button');
+// button.innerHTML = best.name;
+// button.classList.add('btn');
+// button.classList.add('recommandation');
+// button.onclick = function() {
+//     proposition(best);
+// };
+
+// document.getElementById('result').appendChild(button);

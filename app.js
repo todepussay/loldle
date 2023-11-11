@@ -3689,7 +3689,7 @@ data = [
             "Mêlée"
         ],
         "region": [
-            "Runeterra"
+            "Runeterra" 
         ],
         "release": 2011
     }
