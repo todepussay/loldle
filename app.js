@@ -3692,6 +3692,24 @@ data = [
             "Runeterra" 
         ],
         "release": 2011
+    },
+    {
+        "name": "Briar",
+        "sexe": "Feminin",
+        "role": [
+            "Jungle"
+        ],
+        "espece": [
+            "Golem"
+        ],
+        "ressource": "Coûts de santé",
+        "type": [
+            "Mêlée"
+        ],
+        "region": [
+            "Noxus"
+        ],
+        "release": 2023
     }
 ]
 
